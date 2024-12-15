@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eco-Cupones para Escritorio</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f8f5;
+    }
+    header {
+      background-color: #4caf50;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    nav {
+      background-color: #f1f1f1;
+      padding: 10px;
+      text-align: center;
+    }
+    nav a {
+      margin: 0 10px;
+      text-decoration: none;
+      color: #333;
+      font-weight: bold;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    .container {
+      margin: 20px auto;
+      max-width: 900px;
+      padding: 20px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    button {
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .points-display, .progress-bar-container, .trivia-container, .tips-container {
+      margin-top: 20px;
+      text-align: center;
+    }
+    .progress-bar {
+      height: 20px;
+      width: 80%;
+      background-color: #ccc;
+      margin: 20px auto;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+    }
+    .progress-bar-inner {
+      height: 100%;
+      width: 0;
+      background-color: #4caf50;
+      border-radius: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+    table th {
+      background-color: #4caf50;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Eco-Cupones: Recicla y Gana</h1>
+  </header>
+  <nav>
+    <a href="#register" onclick="showSection('register')">Registro</a>
+    <a href="#rewards" onclick="showSection('rewards')">Premios</a>
+    <a href="#trivia" onclick="showSection('trivia')">Trivia</a>
+    <a href="#tips" onclick="showSection('tips')">Consejos</a>
+    <a href="#reports" onclick="showSection('reports')">Reportes</a>
+  </nav>
+  
+  <!-- Registro -->
+  <div id="register" class="container">
+    <h2>Registrar Material Reciclado</h2>
+    <label for="material">Selecciona el material reciclado:</label><br>
+    <select id="material">
+      <option value="5">Plástico (5 puntos)</option>
+      <option value="10">Vidrio (10 puntos)</option>
+      <option value="15">Papel/Cartón (15 puntos)</option>
+      <option value="20">Aluminio (20 puntos)</option>
+    </select>
+    <br><br>
+    <button onclick="addPoints()">Agregar Puntos</button>
+    <div class="points-display">
+      Puntos Acumulados: <span id="points">0</span>
+    </div>
+    <div class="progress-bar-container">
+      <h3>Progreso hacia tu próximo premio</h3>
+      <div class="progress-bar">
+        <div class="progress-bar-inner" id="progress-bar-inner"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Premios -->
+  <div id="rewards" class="container hidden">
+    <h2>Catálogo de Premios</h2>
+    <ul>
+      <li>🌱 Semillas de Plantas - <strong>50 puntos</strong></li>
+      <li>🛍️ Bolsa Reutilizable - <strong>100 puntos</strong></li>
+      <li>🌳 Planta Pequeña - <strong>150 puntos</strong></li>
+    </ul>
+  </div>
+
+  <!-- Trivia -->
+  <div id="trivia" class="container hidden">
+    <h2>Trivia Ambiental</h2>
+    <button onclick="showTrivia()">Responder Pregunta</button>
+    <div id="trivia-question" style="margin-top: 20px;"></div>
+  </div>
+
+  <!-- Consejos -->
+  <div id="tips" class="container hidden">
+    <h2>Consejo del Día</h2>
+    <div id="daily-tip">Presiona el botón para recibir un consejo.</div>
+    <button onclick="showTip()">Ver Consejo</button>
+  </div>
+
+  <!-- Reportes -->
+  <div id="reports" class="container hidden">
+    <h2>Reporte de Participación</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Mes</th>
+          <th>Personas con 100 Puntos</th>
+        </tr>
+      </thead>
+      <tbody id="report-data">
+        <!-- Datos dinámicos -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    let points = parseInt(localStorage.getItem('points')) || 0;
+    const reportData = {
+      "Noviembre 2024": 40,
+      "Octubre 2024": 35,
+      "Septiembre 2024": 50
+    };
+
+    const triviaQuestions = [
+      { question: "¿Cuánto tarda el plástico en descomponerse?", answer: "100 años" },
+      { question: "¿Qué significa reducir, reutilizar y reciclar?", answer: "Tres acciones para cuidar el planeta" },
+      { question: "¿Qué color de contenedor se usa para reciclar vidrio?", answer: "Verde" }
+    ];
+
+    const tips = [
+      "Usa botellas reutilizables en lugar de plásticas.",
+      "Planta un árbol en tu comunidad.",
+      "Asegúrate de limpiar los envases antes de reciclarlos."
+    ];
+
+    document.getElementById('points').textContent = points;
+    loadReports();
+
+    function addPoints() {
+      const material = document.getElementById('material');
+      const selectedPoints = parseInt(material.value);
+      points += selectedPoints;
+      localStorage.setItem('points', points);
+      document.getElementById('points').textContent = points;
+      updateProgressBar();
+      alert(`¡Has agregado ${selectedPoints} puntos! Tu total ahora es de ${points} puntos.`);
+    }
+
+    function updateProgressBar() {
+      const progress = Math.min((points / 150) * 100, 100);
+      document.getElementById('progress-bar-inner').style.width = `${progress}%`;
+    }
+
+    function showTrivia() {
+      const randomTrivia = triviaQuestions[Math.floor(Math.random() * triviaQuestions.length)];
+      const triviaContainer = document.getElementById('trivia-question');
+      triviaContainer.textContent = `Pregunta: ${randomTrivia.question} (Respuesta: ${randomTrivia.answer})`;
+    }
+
+    function showTip() {
+      const randomTip = tips[Math.floor(Math.random() * tips.length)];
+      document.getElementById('daily-tip').textContent = randomTip;
+    }
+
+    function loadReports() {
+      const reportContainer = document.getElementById('report-data');
+      reportContainer.innerHTML = '';
+      for (const [month, count] of Object.entries(reportData)) {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${month}</td><td>${count}</td>`;
+        reportContainer.appendChild(row);
+      }
+    }
+
+    function showSection(sectionId) {
+      const sections = document.querySelectorAll('.container');
+      sections.forEach(section => section.classList.add('hidden'));
+      document.getElementById(sectionId).classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
